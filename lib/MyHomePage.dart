@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tapioca/src/video_editor.dart';
 import 'package:tapioca/tapioca.dart';
-import 'package:vydeo/VideoScreen.dart';
+import 'package:video_player/video_player.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -20,9 +20,16 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final navigatorKey = GlobalKey<NavigatorState>();
   File _video;
+  File _Mainvideo;
   bool isLoading = false;
   bool showText = false;
+  bool isText = false;
+  bool isImage = false;
+  bool isFilter = false;
+
   TextEditingController textController = TextEditingController();
+
+  VideoPlayerController _controller;
 
   @override
   void initState() {
@@ -52,7 +59,13 @@ class _MyHomePageState extends State<MyHomePage> {
       print(video.path);
       setState(() {
         _video = video;
-        isLoading = true;
+        _Mainvideo = video;
+        _controller = VideoPlayerController.file(File(_video.path))
+          ..initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          });
+        // isLoading = true;
       });
     } catch (error) {
       print(error);
@@ -90,135 +103,393 @@ class _MyHomePageState extends State<MyHomePage> {
           )
         : SizedBox();
 
-    final button =
-    Row(
+    editProcess() async {
+      var tempDir = await getTemporaryDirectory();
+      final path = '${tempDir.path}/result.mp4';
+      print(tempDir);
+      final imageBitmap1 =
+          (await rootBundle.load("assets/images/ic_image1.png"))
+              .buffer
+              .asUint8List();
+      try {
+        if (_Mainvideo != null) {
+          if (isText && isImage && isFilter) {
+            final tapiocaBalls = [
+              TapiocaBall.filter(Filters.pink),
+              TapiocaBall.imageOverlay(imageBitmap1, 250, 500),
+              TapiocaBall.textOverlay(
+                  "Nice Click", 300, 200, 50, Color(0xff000000)),
+            ];
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isText && isImage) {
+            final tapiocaBalls = [
+              TapiocaBall.imageOverlay(imageBitmap1, 250, 500),
+              TapiocaBall.textOverlay(
+                  "Nice Click", 300, 200, 50, Color(0xff000000)),
+            ];
+
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isText && isFilter) {
+            final tapiocaBalls = [
+              TapiocaBall.filter(Filters.pink),
+              TapiocaBall.textOverlay(
+                  "Nice Click", 300, 200, 50, Color(0xff000000)),
+            ];
+
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isImage && isFilter) {
+            final tapiocaBalls = [
+              TapiocaBall.filter(Filters.pink),
+              TapiocaBall.imageOverlay(imageBitmap1, 250, 500),
+            ];
+
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isText) {
+            final tapiocaBalls = [
+              TapiocaBall.textOverlay(
+                  "Nice Click", 300, 200, 50, Color(0xff000000)),
+            ];
+
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isImage) {
+            final tapiocaBalls = [
+              TapiocaBall.imageOverlay(imageBitmap1, 250, 500),
+            ];
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else if (isFilter) {
+            final tapiocaBalls = [
+              TapiocaBall.filter(Filters.pink),
+            ];
+
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          } else {
+            final tapiocaBalls = [
+              TapiocaBall.textOverlay(
+                  "Nice Click", 300, 200, 1, Color(0xff000000)),
+            ];
+            final cup = Cup(Content(_Mainvideo.path), tapiocaBalls);
+            cup.suckUp(path).then((_) async {
+              print("finished");
+              GallerySaver.saveVideo(path).then((bool success) {
+                print(success.toString());
+              });
+              _video = File(path);
+              _controller = VideoPlayerController.file(File(_video.path))
+                ..initialize().then((_) {
+                  // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+                  setState(() {});
+                });
+              setState(() {
+                isLoading = false;
+              });
+            });
+          }
+        } else {
+          print("video is null");
+        }
+      } on PlatformException {
+        print("error!!!!");
+      }
+    }
+
+    final buttonEdit = Align(
+        alignment: FractionalOffset.topRight,
+        child: _controller != null && _controller.value.initialized ?Container(
+            alignment: Alignment.topRight,
+            margin: EdgeInsets.only(top: 56, right: 10),
+            padding: EdgeInsets.only(top: 10),
+            width: 80,
+            height: 310,
+            decoration: BoxDecoration(
+                color: Color(0x80808080),
+                borderRadius: BorderRadius.all(Radius.circular(50))),
+            child: Column(
+                //mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _controller != null && _controller.value.initialized
+                      ? InkWell(
+                          onTap: () async {
+                            setState(() {
+                              if (isText) {
+                                isText = false;
+                              } else {
+                                isText = true;
+                              }
+                              isLoading = true;
+                            });
+                            editProcess();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                  width: 60,
+                                  height: 60,
+                                  margin:
+                                      EdgeInsets.only(bottom: 5,right: 10),
+                                  child: Icon(
+                                    Icons.text_fields,
+                                    color: Colors.black,
+                                    size: 20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isText
+                                          ? Color(0xFF008000)
+                                          : Color(0xFFffffff))),
+                              Container(
+                                  margin:
+                                      EdgeInsets.only(bottom: 20,right: 10),
+                                  child: Text("Text"))
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
+                  _controller != null && _controller.value.initialized
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (isImage) {
+                                isImage = false;
+                              } else {
+                                isImage = true;
+                              }
+                              isLoading = true;
+                            });
+                            editProcess();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                  width: 60,
+                                  height: 60,
+                                  margin: EdgeInsets.only(bottom: 5,right: 10),
+                                  child: Icon(
+                                    Icons.image,
+                                    size: 20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isImage
+                                          ? Color(0xFF008000)
+                                          : Color(0xFFFFFFFF))),
+                              Container(
+                                  margin:
+                                  EdgeInsets.only(bottom: 20,right: 10),
+                                  child: Text("Sticker"))
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
+                  _controller != null && _controller.value.initialized
+                      ? InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (isFilter) {
+                                isFilter = false;
+                              } else {
+                                isFilter = true;
+                              }
+                              isLoading = true;
+                            });
+                            editProcess();
+                          },
+                          child: Column(
+                            children: [
+                              Container(
+                                  width: 60,
+                                  height: 60,
+                                  margin: EdgeInsets.only(bottom: 5,right: 10),
+                                  child: Icon(
+                                    Icons.filter,
+                                    size: 20,
+                                  ),
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: isFilter
+                                          ? Color(0xFF008000)
+                                          : Color(0xFFFFFFFF))),
+                              Container(
+                                  margin:
+                                  EdgeInsets.only(bottom: 10, right: 10),
+                                  child: Text("Filter"))
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
+                ])): SizedBox());
+    final button = Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        InkWell(
-          onTap: () {
-            setState(() {
-              if (showText) {
-                showText = false;
-              } else {
-                showText = true;
-              }
-            });
-          },
-          child: Container(
-              width: 60,
-              height: 60,
-              margin: EdgeInsets.only(bottom: 50,right: 20),
-              child: Icon(
-                Icons.text_fields,
-                color: Colors.white,
-                size: 20,
+        _controller != null && _controller.value.initialized
+            ? SizedBox()
+            : InkWell(
+                onTap: () async {
+                  await _pickVideo();
+                },
+                child: Container(
+                    width: 60,
+                    height: 60,
+                    margin: EdgeInsets.only(bottom: 50),
+                    child: Icon(
+                      Icons.videocam,
+                      size: 20,
+                    ),
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: Color(0xFFFF0000))),
               ),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Color(0xFFFF0000))),
+        _controller != null && _controller.value.initialized
+            ? Container(
+                width: 60,
+                height: 60,
+                margin: EdgeInsets.only(bottom: 50),
+                child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        _controller.value.isPlaying
+                            ? _controller.pause()
+                            : _controller.play();
+                      });
+                    },
+                    child: Icon(
+                      _controller.value.isPlaying
+                          ? Icons.pause
+                          : Icons.play_arrow,
+                    )))
+            : SizedBox()
+      ],
+    );
+
+    final data = Stack(
+      children: [
+        Center(
+          child: _controller != null && _controller.value.initialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
         ),
-        InkWell(
-          onTap: () {
-          },
-          child: Container(
-              width: 60,
-              height: 60,
-              margin: EdgeInsets.only(bottom: 50,right: 20),
-              child: Icon(
-                Icons.image,
-                size: 20,
-              ),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Color(0xFF808080))),
-        ),
-        InkWell(
-          onTap: () async {
-            if (textController.text.toString().length > 0) {
-              print("clicked!");
-              await _pickVideo();
-              var tempDir = await getTemporaryDirectory();
-              final path = '${tempDir.path}/result.mp4';
-              print(tempDir);
-              final imageBitmap =
-                  (await rootBundle.load("assets/images/ic_drink.png"))
-                      .buffer
-                      .asUint8List();
-
-              final imageBitmap1 =
-                  (await rootBundle.load("assets/images/ic_image1.png"))
-                      .buffer
-                      .asUint8List();
-
-              final imageBitmap2 =
-                  (await rootBundle.load("assets/images/ic_image2.png"))
-                      .buffer
-                      .asUint8List();
-
-              final imageBitmap3 =
-                  (await rootBundle.load("assets/images/ic_image1.png"))
-                      .buffer
-                      .asUint8List();
-              try {
-                final tapiocaBalls = [
-                  TapiocaBall.filter(Filters.pink),
-                  TapiocaBall.imageOverlay(imageBitmap, 300, 300),
-                  TapiocaBall.imageOverlay(imageBitmap3, 100, 100),
-                  TapiocaBall.imageOverlay(imageBitmap2, 200, 200),
-                  TapiocaBall.imageOverlay(imageBitmap1, 250, 500),
-                  TapiocaBall.textOverlay(textController.text.toString(), 300,
-                      200, 50, Color(0xff008000)),
-                ];
-                if (_video != null) {
-                  final cup = Cup(Content(_video.path), tapiocaBalls);
-                  cup.suckUp(path).then((_) async {
-                    print("finished");
-                    GallerySaver.saveVideo(path).then((bool success) {
-                      print(success.toString());
-                    });
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                          builder: (context) => VideoScreen(path)),
-                    );
-                    setState(() {
-                      isLoading = false;
-                    });
-                  });
-                } else {
-                  print("video is null");
-                }
-              } on PlatformException {
-                print("error!!!!");
-              }
-            } else {
-              showAlertDialog(context);
-            }
-          },
-          child: Container(
-              width: 60,
-              height: 60,
-              margin: EdgeInsets.only(bottom: 50),
-              child: Icon(
-                Icons.videocam,
-                size: 20,
-              ),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle, color: Color(0xFFFF0000))),
-        )
+        Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[text, button]),
+        buttonEdit
       ],
     );
 
     return MaterialApp(
-      navigatorKey: navigatorKey,
-      home: Scaffold(
-        body: Center(
-            child: isLoading
-                ? CircularProgressIndicator()
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[text, button])),
-      ),
-    );
+        navigatorKey: navigatorKey,
+        home: Scaffold(
+          body: Center(
+            child: isLoading ? CircularProgressIndicator() : data,
+          ),
+        ));
   }
 
   showAlertDialog(BuildContext context) {
